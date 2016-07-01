@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Random Pixel Painter</title>
+<style>
+.paletteBox {
+    float: left;
+    width: 100px;
+    height: 50px;
+    padding: 2px;
+}
+.canvasCell {
+    width: 50px;
+    height: 50px;
+    background: white;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+}
+
+#title {
+    text-align: center;
+}
+#palette {
+    display: inline-block;
+}
+#selectedColor {
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+    padding: 0px;
+}
+</style>
+</head>
+
+<body>
+<h1 id="title">Random Pixel Painter</h1>
+<h2>Palette</h2>
+<label for="numColors">Number of colors:</label>
+<input type="number" id="numColors" min="0" value="8">
+<br><br>
+<div id="palette"></div>
+<br><br>
+<button type="button" id="regenColors">Generate new colors</button>
+<br><br>
+<h2>Canvas</h2>
+<label for="canvasSize">Canvas size:</label>
+<input type="number" id="canvasSize" min="0" value="2">
+<br><br>
+<table id="canvas"></table>
+
+<script>
+var palette = document.getElementById("palette");
+var numColors = document.getElementById("numColors");
+var canvas = document.getElementById("canvas");
+var canvasSize = document.getElementById("canvasSize");
+
+palette.addEventListener("click", selectColor);
+numColors.addEventListener("change", updatePaletteSize);
+canvas.addEventListener("click", paintCell);
+canvasSize.addEventListener("change", updateCanvasSize);
+
+document.getElementById("regenColors").addEventListener("click", randomizePalette);
+
+const PALETTE_BOX_CLASS = "paletteBox";
+const CANVAS_CELL_CLASS = "canvasCell";
+const SELECTED_COLOR_ID = "selectedColor";
+
+// Adds or removes colors as necessary from the color palette
+function updatePaletteSize() {
+    var initSize = palette.children.length;
+    var initMaxIndex = initSize - 1;
+    var delta = numColors.value - initSize;
+
+    if (delta < 0) { // more colors than desired; remove excess from the end
+        for (var i = initMaxIndex; i > initMaxIndex + delta; i--) {
+            palette.removeChild(palette.children[i]);
+        }
+    } else { // fewer colors than desired; add more random colors
+        for (var i = 0; i < delta; i++) {
+            var newDiv = document.createElement('div');
+            newDiv.className = PALETTE_BOX_CLASS;
+            newDiv.style.background = randomColor();
+
+            palette.appendChild(newDiv);
+        }
+    }
+}
+
+// Randomizes all the colors in the palette
+function randomizePalette() {
+    var currentChildren = palette.children;
+
+    for (var i = 0; i < currentChildren.length; i++) {
+        currentChildren[i].style.background = randomColor();
+    }
+}
+
+// Generates a random rgb color string (eg. "rgb(0,127,255)")
+function randomColor() {
+    var r = Math.floor(Math.random() * 256);
+    var g = Math.floor(Math.random() * 256);
+    var b = Math.floor(Math.random() * 256);
+
+    return "rgb(" + r + "," + g + "," + b + ")";
+}
+
+// Sets the user-selected color
+function selectColor(evt) {
+    if (evt.currentTarget !== evt.target) {
+        var lastActiveColor = document.getElementById(SELECTED_COLOR_ID);
+        if (lastActiveColor !== null) { 
+            lastActiveColor.removeAttribute("id"); // unset the last active color
+        }
+        if (lastActiveColor === evt.target) { return; } // creates a "toggle" effect
+
+        evt.target.id = SELECTED_COLOR_ID;
+    }
+}
+
+// Paints a single canvas cell
+function paintCell(evt) {
+    if (evt.currentTarget !== evt.target) {
+        var activeColor = document.getElementById(SELECTED_COLOR_ID);
+        if (activeColor === null) { return; }
+
+        evt.target.style.background = activeColor.style.background;
+    }
+}
+
+// Adds or removes cells as necessary for the canvas
+function updateCanvasSize() {
+    var initSize = canvas.rows.length;
+    var delta = canvasSize.value - initSize;
+
+    if (delta < 0) {
+        // remove rows
+        for (var i = delta; i < 0; i++) {
+            canvas.deleteRow(-1);
+        }
+
+        // remove last delta number of squares from each remaining row
+        for (var i = 0; i < canvas.rows.length; i++) {
+            for (var j = delta; j < 0; j++) {
+                canvas.rows[i].deleteCell(-1);
+            }
+        }
+    } else { 
+        // add extra cells for existing rows
+        for (var i = 0; i < initSize; i++) {
+            for (var j = 0; j < delta; j++) {
+                var newCell = canvas.rows[i].insertCell(-1);
+                newCell.className = CANVAS_CELL_CLASS;
+            }
+        }
+    
+        // create row for cloning (since they're all identical new rows)
+        var newRow = document.createElement('tr');
+        for (var j = 0; j < canvasSize.value; j++) {
+            var newCell = document.createElement('td');
+            newCell.className = CANVAS_CELL_CLASS;
+
+            newRow.appendChild(newCell);
+        }
+
+        // add new rows
+        for (var i = 0; i < delta; i++) {
+            canvas.appendChild(newRow.cloneNode(true));
+        }
+    }
+}
+
+window.onload = () => { updatePaletteSize(); updateCanvasSize(); };
+</script>
+</body>
+</html>
