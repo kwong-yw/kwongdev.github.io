@@ -9,10 +9,11 @@
     width: 100px;
     height: 50px;
     padding: 2px;
+    border-radius: 10px;
 }
 .canvasCell {
-    width: 50px;
-    height: 50px;
+    width: 25px;
+    height: 25px;
     background: white;
     border-style: solid;
     border-color: black;
@@ -45,8 +46,10 @@
 <button type="button" id="regenColors">Generate new colors</button>
 <br><br>
 <h2>Canvas</h2>
-<label for="canvasSize">Canvas size:</label>
-<input type="number" id="canvasSize" min="0" value="2">
+<label for="canvasSize">Size:</label>
+<input type="number" id="canvasWidth" min="0" value="2">
+x
+<input type="number" id="canvasHeight" min="0" value="2">
 <br><br>
 <table id="canvas"></table>
 
@@ -54,12 +57,14 @@
 var palette = document.getElementById("palette");
 var numColors = document.getElementById("numColors");
 var canvas = document.getElementById("canvas");
-var canvasSize = document.getElementById("canvasSize");
+var canvasWidth = document.getElementById("canvasWidth");
+var canvasHeight = document.getElementById("canvasHeight");
 
 palette.addEventListener("click", selectColor);
 numColors.addEventListener("change", updatePaletteSize);
 canvas.addEventListener("click", paintCell);
-canvasSize.addEventListener("change", updateCanvasSize);
+canvasWidth.addEventListener("change", updateCanvasWidth);
+canvasHeight.addEventListener("change", updateCanvasHeight);
 
 document.getElementById("regenColors").addEventListener("click", randomizePalette);
 
@@ -129,17 +134,11 @@ function paintCell(evt) {
     }
 }
 
-// Adds or removes cells as necessary for the canvas
-function updateCanvasSize() {
-    var initSize = canvas.rows.length;
-    var delta = canvasSize.value - initSize;
+function updateCanvasWidth() {
+    var initSize = 0 ? canvas.rows[0] === undefined : canvas.rows[0].cells.length;
+    var delta = canvasWidth.value - initSize;
 
     if (delta < 0) {
-        // remove rows
-        for (var i = delta; i < 0; i++) {
-            canvas.deleteRow(-1);
-        }
-
         // remove last delta number of squares from each remaining row
         for (var i = 0; i < canvas.rows.length; i++) {
             for (var j = delta; j < 0; j++) {
@@ -148,16 +147,28 @@ function updateCanvasSize() {
         }
     } else { 
         // add extra cells for existing rows
-        for (var i = 0; i < initSize; i++) {
+        for (var i = 0; i < canvas.rows.length; i++) {
             for (var j = 0; j < delta; j++) {
                 var newCell = canvas.rows[i].insertCell(-1);
                 newCell.className = CANVAS_CELL_CLASS;
             }
         }
-    
+    }
+}
+
+function updateCanvasHeight() {
+    var initSize = canvas.rows.length;
+    var delta = canvasHeight.value - initSize;
+
+    if (delta < 0) {
+        // remove rows
+        for (var i = delta; i < 0; i++) {
+            canvas.deleteRow(-1);
+        }
+    } else { 
         // create row for cloning (since they're all identical new rows)
         var newRow = document.createElement('tr');
-        for (var j = 0; j < canvasSize.value; j++) {
+        for (var j = 0; j < canvasWidth.value; j++) {
             var newCell = document.createElement('td');
             newCell.className = CANVAS_CELL_CLASS;
 
@@ -171,7 +182,11 @@ function updateCanvasSize() {
     }
 }
 
-window.onload = () => { updatePaletteSize(); updateCanvasSize(); };
+window.onload = () => {
+    updatePaletteSize(); 
+    updateCanvasHeight();
+    updateCanvasWidth(); 
+};
 </script>
 </body>
 </html>
