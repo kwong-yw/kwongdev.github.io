@@ -1,0 +1,97 @@
+@import 'https://fonts.googleapis.com/css?family=Carme|Quicksand';
+
+/*FONTS*/
+h1, h2, h3, p, li{
+  font-family: 'Carme', sans-serif;
+}
+
+h1 {
+    font-size: 2em;
+    font-style: italic;
+    color: #888;
+}
+
+h2 {
+    font-size: 1em;
+    font-style: italic;
+    color: #888;
+    padding-top: 30px;
+    padding-bottom: 0;
+}
+
+h3 {
+    font-size: 0.8em;
+    line-height: 1.8em;
+    color: #fff;  
+}
+
+p {
+    font-size: 0.8em;
+    line-height: 1.8em;
+    color: #444444;
+}
+
+
+/*LINKS*/
+.link{
+    font-family: Quicksand, sans-serif;
+}
+
+.link:link, visited {
+    background-color: #ff6666;
+    color: white;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border: 1px solid transparent;
+  }
+
+.link:hover {
+    background-color: transparent;
+    border: 1px solid #CCCCCC;
+  }
+
+
+/*HEADER*/
+header{ 
+    background-color: #000;
+    text-align: center;
+    padding: 30px;
+}
+
+footer{
+    background-color: #000;
+    text-align: center;
+    padding: 10px;
+
+    font-family: Quicksand, sans-serif;
+    font-size: 0.8em;
+    line-height: 1.8em;
+    color: white;
+}
+
+
+
+/*LAYOUT*/
+.wrap{
+  margin: 0px auto;
+  overflow: hidden;
+  width: 700px;
+  max-width: 60%;
+ }
+
+.wrap a{
+    background-color: transparent;
+    color: #ff6666;
+    padding: 0px;
+  }
+}
+
+/*RESPONSIVE LAYOUT*/
+@media only screen and (max-width: 1085px){
+  .wrap{
+    margin: 15px auto;
+  }
+
+}
