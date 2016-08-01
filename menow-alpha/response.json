@@ -1,7 +1,7 @@
-{results: [{lat:42.3569839,
-            lon:-71.0596516,
-            user_id:1,
-            user:test_user,
-            url:kwongdev.github.io/menow-alpha/cats/alpha_koi.jpg,
-            desc: "A sample description" }]
+{"results": [{lat:42.3569839,
+              lon:-71.0596516,
+              user_id:1,
+              user:"test_user",
+              url:"kwongdev.github.io/menow-alpha/cats/alpha_koi.jpg",
+              desc: "It's Koi!" }]
 }
