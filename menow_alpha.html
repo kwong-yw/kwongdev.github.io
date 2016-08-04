@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Menow Alpha</title>
+<!-- This is a demo for Menow (winifredgong.com/menow.html) -->
+<style type="text/css">
+html, body { 
+    height: 100%; 
+    margin: 0; 
+    padding: 0; 
+}
+
+#map { 
+    height: 100%; 
+}
+#cat_img {
+    max-width: 25%;
+    height: auto;
+}
+</style>
+</head>
+
+
+<body>
+
+<!-- Maybe have a "loading cats" thing while waiting for callback -->
+
+<div id="map"></div>
+
+<script type="text/javascript">
+    var map;
+
+    function init() {
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                var currLoc = {lat: position.coords.latitude, lng: position.coords.longitude};
+                initMap(currLoc);
+                catFind(currLoc);
+            });
+        } else {
+            alert("No geolocation services available on this device!");
+        }
+      }
+
+
+    function initMap(loc) {
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: loc,
+            zoom: 18
+        });
+
+        // 
+    }
+
+    // make this an async GET request
+    function catFind(loc) {
+        var req = new XMLHttpRequest();
+
+        req.onreadystatechange = function() { 
+            if (req.readyState == 4 && req.status == 200) {
+                loadCats(JSON.parse(req.responseText));
+            }
+        }
+
+        req.open("GET", "https://kwongdev.github.io/menow-alpha/response.json");
+        req.send(null);
+    }
+
+    function loadCats(results) {
+        if (map === undefined) {
+            return;
+        }
+
+        var cats = results.results;
+        for (var i = cats.length - 1; i >= 0; i--) {
+            var marker = new google.maps.Marker({
+                position: new google.maps.LatLng(cats[i].lat, cats[i].lon),
+                map: map,
+                title: cats[i].cat_name,
+                text: cats[i].desc
+            });
+
+            var contentString = '<div><img class="cat_img" src="' + cats[i].url + '" alt="' + cats[i].name + '"></div>';
+
+            var infoWindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+
+
+            marker.addListener("click", function() { 
+                infoWindow.open(map, marker);
+            });
+        }
+    }
+</script>
+<script async defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOGXbjr-na8OAWT1bnmWIHJybA7hnj68w&callback=init">
+</script>
+</body>
+</html>
